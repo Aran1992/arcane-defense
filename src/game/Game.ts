@@ -1,4 +1,4 @@
-import { Container, Graphics, Text } from 'pixi.js';
+import { Container, Graphics } from 'pixi.js';
 import {
   DESIGN_HEIGHT,
   DESIGN_WIDTH,
@@ -109,15 +109,6 @@ export class Game {
     p.x = PLAYER_X;
     p.y = PLAYER_Y;
     this.gameplayLayer.addChild(p);
-
-    const label = new Text({
-      text: '奥术',
-      style: { fill: 0xffffff, fontSize: 14 },
-    });
-    label.anchor.set(0.5);
-    label.x = PLAYER_X;
-    label.y = PLAYER_Y - 36;
-    this.gameplayLayer.addChild(label);
   }
 
   getSnapshot(): GameSnapshot {

@@ -130,4 +130,14 @@ export class PlayerBuild {
     const amp = getUpgradeRank(this.ranks, 'chain_surge');
     return amp * 150; // 每级 0.15s = 150ms 冷却缩减
   }
+
+  get hasArcaneMissile(): boolean {
+    if (typeof window !== 'undefined' && window.location) {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('testSkill') === 'chain') {
+        return false;
+      }
+    }
+    return true;
+  }
 }

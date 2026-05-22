@@ -43,17 +43,17 @@ export class CombatSystem {
     }
 
     // 2. 奥术飞弹释放与冷却
-    this.cooldown -= dt;
-    if (this.cooldown > 0) {
-      return;
+    if (build.hasArcaneMissile) {
+      this.cooldown -= dt;
+      if (this.cooldown <= 0) {
+        const target = this.findTarget(enemies);
+        if (target) {
+          const aim = this.leadTarget(target);
+          this.fireAttackVolley(build, aim.x, aim.y);
+          this.cooldown = build.cooldownMs;
+        }
+      }
     }
-    const target = this.findTarget(enemies);
-    if (!target) {
-      return;
-    }
-    const aim = this.leadTarget(target);
-    this.fireAttackVolley(build, aim.x, aim.y);
-    this.cooldown = build.cooldownMs;
   }
 
   clearPendingBursts(): void {
