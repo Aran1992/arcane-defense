@@ -1,4 +1,4 @@
-/** Sync with docs/game/skills/arcane-missile.md */
+/** Sync with docs/game/skills/*.md */
 
 export type UpgradeId =
   | 'damage_amp'
@@ -11,7 +11,15 @@ export type UpgradeId =
   | 'split'
   | 'split_count'
   | 'split_explode'
-  | 'size_up';
+  | 'size_up'
+  // Chain Lightning
+  | 'unlock_chain'
+  | 'chain_damage'
+  | 'chain_bounces'
+  | 'chain_slow'
+  | 'chain_fork'
+  | 'chain_explode'
+  | 'chain_surge';
 
 export interface UpgradeDef {
   id: UpgradeId;
@@ -101,6 +109,55 @@ export const UPGRADE_DEFS: readonly UpgradeDef[] = [
     maxRank: 3,
     prerequisites: [],
     description: '每级碰撞盒 +20%，伤害 +10%',
+  },
+  {
+    id: 'unlock_chain',
+    name: '解锁闪电链',
+    maxRank: 1,
+    prerequisites: [],
+    description: '解锁闪电链技能，初始弹跳3次，冷却3.5秒',
+  },
+  {
+    id: 'chain_damage',
+    name: '电能过载',
+    maxRank: 5,
+    prerequisites: ['unlock_chain'],
+    description: '每级闪电链直击与弹跳伤害 +30%',
+  },
+  {
+    id: 'chain_bounces',
+    name: '高压传导',
+    maxRank: 3,
+    prerequisites: ['unlock_chain'],
+    description: '每级最大弹跳次数 +2',
+  },
+  {
+    id: 'chain_slow',
+    name: '强效麻痹',
+    maxRank: 3,
+    prerequisites: ['unlock_chain'],
+    description: '每级麻痹减速比例 +15%（加法），持续时间 +0.5s',
+  },
+  {
+    id: 'chain_fork',
+    name: '分叉闪电',
+    maxRank: 1,
+    prerequisites: ['unlock_chain'],
+    description: '首个目标命中后，分叉成2条独立的闪电链传导弹跳',
+  },
+  {
+    id: 'chain_explode',
+    name: '雷击爆轰',
+    maxRank: 1,
+    prerequisites: ['unlock_chain'],
+    description: '弹跳转向结束时在最后受击者处引发雷暴爆炸',
+  },
+  {
+    id: 'chain_surge',
+    name: '闪电涌动',
+    maxRank: 3,
+    prerequisites: ['unlock_chain'],
+    description: '每次弹跳成功，该技能的剩余冷却时间减少0.15秒',
   },
 ];
 

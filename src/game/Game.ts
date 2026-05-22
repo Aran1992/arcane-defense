@@ -16,6 +16,7 @@ import { LevelProgressSystem } from './systems/LevelProgressSystem.ts';
 import { ProjectileSystem } from './systems/ProjectileSystem.ts';
 import { WallSystem } from './systems/WallSystem.ts';
 import { WaveSpawnSystem } from './systems/WaveSpawnSystem.ts';
+import { ChainLightningSystem } from './systems/ChainLightningSystem.ts';
 
 export type GameCallbacks = {
   onPhaseChange: (phase: GamePhase) => void;
@@ -36,6 +37,7 @@ export class Game {
   private readonly levelProgress = new LevelProgressSystem();
   private readonly wall = new WallSystem();
   private readonly projectiles: ProjectileSystem;
+  private readonly chainLightning: ChainLightningSystem;
   private readonly combat: CombatSystem;
 
   phase: GamePhase = 'playing';
@@ -76,7 +78,10 @@ export class Game {
     this.projectiles = new ProjectileSystem(this.projectileLayer, this.vfxLayer, (e) =>
       this.handleKill(e),
     );
-    this.combat = new CombatSystem(this.projectiles);
+    this.chainLightning = new ChainLightningSystem(this.projectileLayer, this.vfxLayer, (e) =>
+      this.handleKill(e),
+    );
+    this.combat = new CombatSystem(this.projectiles, this.chainLightning);
   }
 
   private drawWallLine(): void {
@@ -142,7 +147,8 @@ export class Game {
         if (!enemy.alive) {
           continue;
         }
-        enemy.y += (ENEMY_SPEED * dt) / 1000;
+        enemy.update(dt);
+        enemy.y += (ENEMY_SPEED * enemy.speedScale * dt) / 1000;
         enemy.syncPosition();
       }
 
@@ -154,6 +160,7 @@ export class Game {
 
       this.combat.update(this.build, this.enemies, dt);
       this.projectiles.update(this.build, this.enemies, dt);
+      this.chainLightning.update(dt);
 
       if (this.waveSpawn.isComplete && !this.hasLivingEnemies()) {
         this.setPhase('victory');
@@ -207,12 +214,14 @@ export class Game {
     }
     this.enemies.length = 0;
     this.projectiles.clear();
+    this.chainLightning.clear();
     this.build.ranks = {};
     this.levelProgress.level = 1;
     this.levelProgress.killsThisLevel = 0;
     this.wall.hp = this.wall.maxHp;
     this.waveSpawn.reset();
     this.combat.cooldown = 0;
+    this.combat.chainCooldown = 0;
     this.combat.clearPendingBursts();
     this.setPhase('playing');
   }

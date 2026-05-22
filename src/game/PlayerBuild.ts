@@ -8,6 +8,11 @@ import {
   RAPID_FIRE_BURST_GAP_RANK2_MS,
   SPLIT_BASE_COUNT,
   SPLIT_DAMAGE_RATIO,
+  CHAIN_LIGHTNING_BASE_DAMAGE,
+  CHAIN_LIGHTNING_BASE_BOUNCES,
+  CHAIN_LIGHTNING_BASE_SLOW,
+  CHAIN_LIGHTNING_BASE_SLOW_DURATION,
+  CHAIN_LIGHTNING_BASE_COOLDOWN_MS,
 } from './data/constants.ts';
 import { getUpgradeRank, type UpgradeRanks } from './data/upgrades.ts';
 
@@ -82,5 +87,47 @@ export class PlayerBuild {
 
   get splitExplode(): boolean {
     return getUpgradeRank(this.ranks, 'split_explode') > 0;
+  }
+
+  // === Chain Lightning Getters ===
+  get hasChainLightning(): boolean {
+    return getUpgradeRank(this.ranks, 'unlock_chain') > 0;
+  }
+
+  get chainDamage(): number {
+    const amp = getUpgradeRank(this.ranks, 'chain_damage');
+    return CHAIN_LIGHTNING_BASE_DAMAGE * (1 + 0.3 * amp);
+  }
+
+  get chainCooldownMs(): number {
+    return CHAIN_LIGHTNING_BASE_COOLDOWN_MS;
+  }
+
+  get chainMaxBounces(): number {
+    const extra = getUpgradeRank(this.ranks, 'chain_bounces');
+    return CHAIN_LIGHTNING_BASE_BOUNCES + extra * 2;
+  }
+
+  get chainSlowRatio(): number {
+    const amp = getUpgradeRank(this.ranks, 'chain_slow');
+    return Math.min(0.95, CHAIN_LIGHTNING_BASE_SLOW + amp * 0.15); // 麻痹减速加法叠加，上限 95%
+  }
+
+  get chainSlowDurationMs(): number {
+    const amp = getUpgradeRank(this.ranks, 'chain_slow');
+    return CHAIN_LIGHTNING_BASE_SLOW_DURATION + amp * 500;
+  }
+
+  get hasChainFork(): boolean {
+    return getUpgradeRank(this.ranks, 'chain_fork') > 0;
+  }
+
+  get hasChainExplode(): boolean {
+    return getUpgradeRank(this.ranks, 'chain_explode') > 0;
+  }
+
+  get chainSurgeCdReduction(): number {
+    const amp = getUpgradeRank(this.ranks, 'chain_surge');
+    return amp * 150; // 每级 0.15s = 150ms 冷却缩减
   }
 }

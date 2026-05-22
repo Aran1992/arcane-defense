@@ -8,6 +8,7 @@ import {
 import type { PlayerBuild } from '../PlayerBuild.ts';
 import type { Enemy } from '../entities/Enemy.ts';
 import type { ProjectileSystem } from './ProjectileSystem.ts';
+import type { ChainLightningSystem } from './ChainLightningSystem.ts';
 
 interface PendingBurst {
   delayMs: number;
@@ -17,13 +18,31 @@ interface PendingBurst {
 
 export class CombatSystem {
   cooldown = 0;
+  chainCooldown = 0;
   private readonly pendingBursts: PendingBurst[] = [];
 
-  constructor(private readonly projectiles: ProjectileSystem) {}
+  constructor(
+    private readonly projectiles: ProjectileSystem,
+    private readonly chainLightning: ChainLightningSystem,
+  ) {}
 
   update(build: PlayerBuild, enemies: Enemy[], dt: number): void {
     this.tickPendingBursts(build, dt);
 
+    // 1. 闪电链释放与冷却 (与飞弹完全独立)
+    if (build.hasChainLightning) {
+      this.chainCooldown -= dt;
+      if (this.chainCooldown <= 0) {
+        const bounces = this.chainLightning.triggerChain(build, enemies);
+        if (bounces >= 0) {
+          const baseCd = build.chainCooldownMs;
+          const cdReduction = bounces * build.chainSurgeCdReduction;
+          this.chainCooldown = Math.max(500, baseCd - cdReduction);
+        }
+      }
+    }
+
+    // 2. 奥术飞弹释放与冷却
     this.cooldown -= dt;
     if (this.cooldown > 0) {
       return;
