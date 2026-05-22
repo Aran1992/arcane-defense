@@ -1,0 +1,119 @@
+.hud-root {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.hud {
+  padding: 12px 16px;
+  color: #e6edf3;
+  font-size: 14px;
+  line-height: 1.6;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.hud-row {
+  margin: 2px 0;
+}
+
+.upgrade-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  pointer-events: auto;
+}
+
+.upgrade-card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 90%;
+  width: 360px;
+  color: #e6edf3;
+}
+
+.upgrade-card h2 {
+  font-size: 18px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.upgrade-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.upgrade-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid #388bfd;
+  border-radius: 8px;
+  background: #21262d;
+  color: #e6edf3;
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+}
+
+.upgrade-btn:hover {
+  background: #30363d;
+}
+
+.upgrade-btn strong {
+  font-size: 15px;
+}
+
+.upgrade-btn span {
+  font-size: 12px;
+  color: #8b949e;
+}
+
+.end-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+  pointer-events: auto;
+}
+
+.end-card {
+  background: #161b22;
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+  color: #e6edf3;
+}
+
+.end-card h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.btn-restart {
+  padding: 10px 24px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  background: #238636;
+  color: #fff;
+  cursor: pointer;
+}
+
+.btn-restart:hover {
+  background: #2ea043;
+}

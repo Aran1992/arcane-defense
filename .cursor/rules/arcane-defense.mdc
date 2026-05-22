@@ -1,0 +1,13 @@
+---
+description: arcane-defense 项目约定：文档优先、玩法与数据同步
+alwaysApply: true
+---
+
+# arcane-defense
+
+- 玩法与数值以 `docs/game/` 为准；未写入文档的机制不得实现。
+- 修改波次、升级、技能、城墙逻辑时，同步更新对应 Markdown，再改 `src/game/data/`。
+- 术语：波次、升级、三选一、奥术飞弹、城墙、互斥组、maxRank — 与文档中文一致。
+- 实现阶段：提交前须通过 Prettier 与 ESLint（见 `docs/dev/tooling.md`）。
+- 每次一项功能开发完成后，或者一项新功能开发前，必须通过开启一个 subagent 的方式对当前的改动进行审查与规范的 Git 提交。完成提交后方可开始新的开发。
+- AI 入口：`AGENTS.md`；强化表：`docs/game/skills/arcane-missile.md`。
