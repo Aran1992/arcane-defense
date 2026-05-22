@@ -53,7 +53,7 @@ export class WaveSpawnSystem {
           break;
         }
         const x = 80 + Math.random() * (DESIGN_WIDTH - 160);
-        const enemy = new Enemy(x, ENEMY_SPAWN_Y);
+        const enemy = new Enemy(x, ENEMY_SPAWN_Y, this.wave);
         this.enemyLayer.addChild(enemy.gfx);
         spawned.push(enemy);
         this.spawnIndex += 1;

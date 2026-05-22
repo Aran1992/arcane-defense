@@ -1,6 +1,5 @@
 import {
   ARCANE_MISSILE_SPEED,
-  ENEMY_SPEED,
   PLAYER_ATTACK_RANGE,
   PLAYER_X,
   PLAYER_Y,
@@ -91,7 +90,7 @@ export class CombatSystem {
     const travelSec = dist / ARCANE_MISSILE_SPEED;
     return {
       x: target.x,
-      y: target.y + ENEMY_SPEED * travelSec,
+      y: target.y + target.speed * travelSec,
     };
   }
 

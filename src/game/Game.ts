@@ -1,12 +1,5 @@
 import { Container, Graphics } from 'pixi.js';
-import {
-  DESIGN_HEIGHT,
-  DESIGN_WIDTH,
-  ENEMY_SPEED,
-  PLAYER_X,
-  PLAYER_Y,
-  WALL_Y,
-} from './data/constants.ts';
+import { DESIGN_HEIGHT, DESIGN_WIDTH, PLAYER_X, PLAYER_Y, WALL_Y } from './data/constants.ts';
 import { applyUpgrade, rollUpgradeChoices, type UpgradeDef } from './data/upgrades.ts';
 import type { Enemy } from './entities/Enemy.ts';
 import type { GamePhase, GameSnapshot } from './GameState.ts';
@@ -150,7 +143,7 @@ export class Game {
           continue;
         }
         enemy.update(dt);
-        enemy.y += (ENEMY_SPEED * enemy.speedScale * dt) / 1000;
+        enemy.y += (enemy.speed * enemy.speedScale * dt) / 1000;
         enemy.syncPosition();
       }
 

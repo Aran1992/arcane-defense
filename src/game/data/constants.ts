@@ -8,7 +8,7 @@ export const WAVE_GAP_MS = 3000;
 export const MAX_WAVES = 20;
 
 /** 战斗 */
-export const ARCANE_MISSILE_BASE_DAMAGE = 15;
+export const ARCANE_MISSILE_BASE_DAMAGE = 12;
 export const ARCANE_MISSILE_COOLDOWN_MS = 800;
 /** 连发：同一次攻击 tick 内额外齐射轮之间的间隔（ms） */
 export const RAPID_FIRE_BURST_GAP_MS = 100;
@@ -30,8 +30,8 @@ export const ENEMY_WALL_DAMAGE = 5;
 export const ENEMY_WALL_ATTACK_INTERVAL_MS = 1000;
 
 /** 敌人 */
-export const ENEMY_HP = 10;
-export const ENEMY_SPEED = 85;
+export const ENEMY_HP = 15;
+export const ENEMY_SPEED = 65;
 export const ENEMY_SPAWN_Y = 80;
 export const ENEMY_RADIUS = 14;
 

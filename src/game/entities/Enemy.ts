@@ -1,11 +1,13 @@
 import { Graphics } from 'pixi.js';
-import { ENEMY_HP, ENEMY_RADIUS } from '../data/constants.ts';
+import { ENEMY_RADIUS } from '../data/constants.ts';
 
 let enemyIdCounter = 0;
 
 export class Enemy {
   readonly id = ++enemyIdCounter;
-  hp = ENEMY_HP;
+  hp: number;
+  maxHp: number;
+  speed: number;
   wallAttackTimer = 0;
   readonly gfx: Graphics;
 
@@ -15,7 +17,13 @@ export class Enemy {
   constructor(
     public x: number,
     public y: number,
+    public wave: number = 1,
   ) {
+    // 动态计算该波次下敌人的最大生命值与速度属性
+    this.maxHp = wave === 1 ? 15 : Math.round(15 * Math.pow(1.25, wave - 1));
+    this.hp = this.maxHp;
+    this.speed = 65 + 2 * (wave - 1);
+
     this.gfx = new Graphics();
     this.draw();
   }
@@ -60,8 +68,26 @@ export class Enemy {
 
   draw(): void {
     this.gfx.clear();
+
+    // 绘制敌人本体红色圆球
     this.gfx.circle(0, 0, ENEMY_RADIUS);
     this.gfx.fill({ color: 0xe74c3c });
+
+    // 仅在受到伤害时绘制简约现代血条以提升品质与视觉反馈
+    if (this.hp < this.maxHp) {
+      const barWidth = ENEMY_RADIUS * 2;
+      const barHeight = 3;
+      const barY = -ENEMY_RADIUS - 8; // 位于怪头顶上方
+
+      // 绘制深灰暗红色底槽
+      this.gfx.rect(-barWidth / 2, barY, barWidth, barHeight);
+      this.gfx.fill({ color: 0x3e1815 });
+
+      // 绘制亮绿生命条
+      const ratio = Math.max(0, this.hp / this.maxHp);
+      this.gfx.rect(-barWidth / 2, barY, barWidth * ratio, barHeight);
+      this.gfx.fill({ color: 0x2ecc71 });
+    }
 
     if (this.slowTimer > 0) {
       // 绘制麻痹减速的蓝色光环
