@@ -82,6 +82,17 @@ export class Game {
       this.handleKill(e),
     );
     this.combat = new CombatSystem(this.projectiles, this.chainLightning);
+    this.initTestMode();
+  }
+
+  private initTestMode(): void {
+    if (typeof window !== 'undefined' && window.location) {
+      const params = new URLSearchParams(window.location.search);
+      const testSkill = params.get('testSkill');
+      if (testSkill === 'chain') {
+        this.build.ranks = { unlock_chain: 1 };
+      }
+    }
   }
 
   private drawWallLine(): void {
@@ -216,6 +227,7 @@ export class Game {
     this.projectiles.clear();
     this.chainLightning.clear();
     this.build.ranks = {};
+    this.initTestMode();
     this.levelProgress.level = 1;
     this.levelProgress.killsThisLevel = 0;
     this.wall.hp = this.wall.maxHp;
@@ -224,5 +236,35 @@ export class Game {
     this.combat.chainCooldown = 0;
     this.combat.clearPendingBursts();
     this.setPhase('playing');
+  }
+
+  triggerUpgrade(): void {
+    if (this.phase !== 'playing') {
+      return;
+    }
+    this.levelProgress.level += 1;
+    this.levelProgress.killsThisLevel = 0;
+    this.pendingUpgradeChoices = rollUpgradeChoices(this.build.ranks);
+    if (this.pendingUpgradeChoices.length > 0) {
+      this.setPhase('upgrade');
+      this.callbacks.onUpgradeChoices(this.pendingUpgradeChoices);
+    }
+  }
+
+  clearAllEnemies(): void {
+    // 杀死当前屏幕上所有活着的敌人，并触发击杀
+    for (const e of this.enemies) {
+      if (e.alive) {
+        e.hp = 0;
+        this.handleKill(e);
+      }
+    }
+    this.pruneDeadEnemies();
+    this.emitSnapshot();
+  }
+
+  healWall(): void {
+    this.wall.hp = this.wall.maxHp;
+    this.emitSnapshot();
   }
 }

@@ -191,7 +191,18 @@ export function isUpgradeEligible(ranks: UpgradeRanks, def: UpgradeDef): boolean
 }
 
 export function rollUpgradeChoices(ranks: UpgradeRanks, count = 3): UpgradeDef[] {
-  const pool = UPGRADE_DEFS.filter((d) => isUpgradeEligible(ranks, d));
+  let pool = UPGRADE_DEFS.filter((d) => isUpgradeEligible(ranks, d));
+
+  if (typeof window !== 'undefined' && window.location) {
+    const params = new URLSearchParams(window.location.search);
+    const testSkill = params.get('testSkill');
+    if (testSkill === 'chain') {
+      pool = pool.filter((d) => d.id === 'unlock_chain' || d.id.startsWith('chain_'));
+    } else if (testSkill === 'arcane') {
+      pool = pool.filter((d) => d.id !== 'unlock_chain' && !d.id.startsWith('chain_'));
+    }
+  }
+
   if (pool.length === 0) {
     return [];
   }

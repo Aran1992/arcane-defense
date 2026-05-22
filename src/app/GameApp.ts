@@ -4,6 +4,7 @@ import { Game, type GameCallbacks } from '../game/Game.ts';
 import type { GamePhase } from '../game/GameState.ts';
 import { Hud } from '../ui/Hud.ts';
 import { UpgradePicker } from '../ui/UpgradePicker.ts';
+import { DevPanel } from '../ui/DevPanel.ts';
 
 export class GameApp {
   private app!: Application;
@@ -40,7 +41,10 @@ export class GameApp {
       this.game.pickUpgrade(def);
     });
 
+    new DevPanel(container, this.game);
+
     window.addEventListener('resize', () => this.layout());
+
     this.app.ticker.add((ticker) => {
       this.game.update(ticker.deltaMS);
     });
