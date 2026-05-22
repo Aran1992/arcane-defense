@@ -54,3 +54,8 @@
 | 目录结构、系统模块          | architecture.md   |
 
 项目 Skill：`.cursor/skills/arcane-defense/SKILL.md`（触发词与速查表）。
+
+## 远程仓库与部署
+
+- **远程仓库**：`https://github.com/Aran1992/arcane-defense.git` (本地已配置带 Token 的 origin，在本地运行 git push 即可无缝推送)
+- **手机预览地址**：`https://Aran1992.github.io/arcane-defense/` (部署到 gh-pages 分支即可通过手机流畅访问)

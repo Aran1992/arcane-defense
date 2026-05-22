@@ -11,3 +11,5 @@ alwaysApply: true
 - 实现阶段：提交前须通过 Prettier 与 ESLint（见 `docs/dev/tooling.md`）。
 - 每次一项功能开发完成后，或者一项新功能开发前，必须通过开启一个 subagent 的方式对当前的改动进行审查与规范的 Git 提交。完成提交后方可开始新的开发。
 - AI 入口：`AGENTS.md`；强化表：`docs/game/skills/arcane-missile.md`。
+- 远程仓库与手机预览地址记录在 `AGENTS.md` 中。开发新功能并完成本地规范提交后，可使用 `scripts/deploy.bat` 一键构建并部署至 `gh-pages`。
+
