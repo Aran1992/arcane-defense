@@ -3,7 +3,6 @@ import {
   PLAYER_X,
   PLAYER_Y,
   PLAYER_ATTACK_RANGE,
-  CHAIN_LIGHTNING_BOUNCE_RANGE,
   CHAIN_LIGHTNING_EXPLODE_RADIUS,
   CHAIN_LIGHTNING_EXPLODE_DAMAGE_RATIO,
 } from '../data/constants.ts';
@@ -218,7 +217,7 @@ export class ChainLightningSystem {
   }
 
   /**
-   * 在当前敌人周围半径 CHAIN_LIGHTNING_BOUNCE_RANGE 内寻找最近的 N 个未受击的活怪
+   * 在全场范围内寻找最近的 N 个未受击的活怪，闪电链弹射不受距离限制
    */
   private findNearestBounces(
     current: Enemy,
@@ -232,7 +231,6 @@ export class ChainLightningSystem {
         const dist = Math.hypot(e.x - current.x, e.y - current.y);
         return { enemy: e, dist };
       })
-      .filter((item) => item.dist <= CHAIN_LIGHTNING_BOUNCE_RANGE)
       .sort((a, b) => a.dist - b.dist);
 
     return pool.slice(0, limit).map((item) => item.enemy);
