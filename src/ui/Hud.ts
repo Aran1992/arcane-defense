@@ -4,7 +4,12 @@ export class Hud {
   private readonly el: HTMLElement;
   private endOverlay: HTMLElement | null = null;
 
-  constructor(root: HTMLElement) {
+  constructor(root: HTMLElement, version: string) {
+    const versionEl = document.createElement('div');
+    versionEl.className = 'version-label';
+    versionEl.textContent = version;
+    root.appendChild(versionEl);
+
     this.el = document.createElement('div');
     this.el.className = 'hud';
     root.appendChild(this.el);

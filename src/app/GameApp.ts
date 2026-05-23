@@ -1,5 +1,5 @@
 import { Application } from 'pixi.js';
-import { DESIGN_HEIGHT, DESIGN_WIDTH } from '../game/data/constants.ts';
+import { DESIGN_HEIGHT, DESIGN_WIDTH, GAME_VERSION } from '../game/data/constants.ts';
 import { Game, type GameCallbacks } from '../game/Game.ts';
 import type { GamePhase } from '../game/GameState.ts';
 import { Hud } from '../ui/Hud.ts';
@@ -34,7 +34,7 @@ export class GameApp {
     const hudRoot = document.createElement('div');
     hudRoot.className = 'hud-root';
     container.appendChild(hudRoot);
-    this.hud = new Hud(hudRoot);
+    this.hud = new Hud(hudRoot, GAME_VERSION);
     this.hud.update(this.game.getSnapshot());
 
     this.picker = new UpgradePicker(container, (def) => {
