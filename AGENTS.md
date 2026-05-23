@@ -58,4 +58,5 @@
 ## 远程仓库与部署
 
 - **远程仓库**：`https://github.com/Aran1992/arcane-defense.git` (本地已配置带 Token 的 origin，在本地运行 git push 即可无缝推送)
-- **手机预览地址**：`https://Aran1992.github.io/arcane-defense/` (部署到 gh-pages 分支即可通过手机流畅访问)
+- **手机预览地址**：`https://Aran1992.github.io/arcane-defense/`
+- **自动部署**：`.github/workflows/deploy-gh-pages.yml` — push 到 master 后 GitHub Actions 自动构建并部署到 gh-pages，无需手动操作
