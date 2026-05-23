@@ -72,9 +72,18 @@ npx lint-staged
 
 提交前须 **无 ESLint error**；warning 策略由实现阶段配置。
 
-## CI（可选，v1 可不实现）
+## CI / CD
 
-Push / PR 时建议：
+### 自动部署（已配置）
+
+Push 到 `master` 分支时自动构建并部署到 GitHub Pages：
+
+- **Workflow**：`.github/workflows/deploy-gh-pages.yml`
+- **步骤**：`checkout → npm ci → npm run build → peaceiris/actions-gh-pages`
+- **发布分支**：`gh-pages`
+- **预览地址**：`https://Aran1992.github.io/arcane-defense/`
+
+### 质量门禁（可选，v1 暂未实现）
 
 ```yaml
 - run: npm ci
@@ -83,7 +92,7 @@ Push / PR 时建议：
 - run: npm run build
 ```
 
-文件位置：`.github/workflows/ci.yml`（实现阶段添加）。
+文件位置：`.github/workflows/ci.yml`（待实现）。
 
 ## 相关文档
 
