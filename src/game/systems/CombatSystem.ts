@@ -8,6 +8,7 @@ import type { PlayerBuild } from '../PlayerBuild.ts';
 import type { Enemy } from '../entities/Enemy.ts';
 import type { ProjectileSystem } from './ProjectileSystem.ts';
 import type { ChainLightningSystem } from './ChainLightningSystem.ts';
+import type { TornadoSystem } from './TornadoSystem.ts';
 
 interface PendingBurst {
   delayMs: number;
@@ -18,17 +19,19 @@ interface PendingBurst {
 export class CombatSystem {
   cooldown = 0;
   chainCooldown = 0;
+  tornadoCooldown = 0;
   private readonly pendingBursts: PendingBurst[] = [];
 
   constructor(
     private readonly projectiles: ProjectileSystem,
     private readonly chainLightning: ChainLightningSystem,
+    private readonly tornadoes: TornadoSystem,
   ) {}
 
   update(build: PlayerBuild, enemies: Enemy[], dt: number): void {
     this.tickPendingBursts(build, dt);
 
-    // 1. 闪电链释放与冷却 (与飞弹完全独立)
+    // 1. 闪电链 (独立冷却)
     if (build.hasChainLightning) {
       this.chainCooldown -= dt;
       if (this.chainCooldown <= 0) {
@@ -41,7 +44,20 @@ export class CombatSystem {
       }
     }
 
-    // 2. 奥术飞弹释放与冷却
+    // 2. 龙卷风 (独立冷却)
+    if (build.hasTornado) {
+      this.tornadoCooldown -= dt;
+      if (this.tornadoCooldown <= 0) {
+        const target = this.findTarget(enemies);
+        if (target) {
+          const aim = this.leadTarget(target);
+          this.tornadoes.fireAt(build, aim.x, aim.y);
+          this.tornadoCooldown = build.tornadoCooldownMs;
+        }
+      }
+    }
+
+    // 3. 奥术飞弹 (独立冷却)
     if (build.hasArcaneMissile) {
       this.cooldown -= dt;
       if (this.cooldown <= 0) {

@@ -13,6 +13,13 @@ import {
   CHAIN_LIGHTNING_BASE_SLOW,
   CHAIN_LIGHTNING_BASE_SLOW_DURATION,
   CHAIN_LIGHTNING_BASE_COOLDOWN_MS,
+  TORNADO_BASE_TICK_DAMAGE,
+  TORNADO_BASE_RADIUS,
+  TORNADO_BASE_DURATION_MS,
+  TORNADO_SLOW_BASE_RATIO,
+  TORNADO_SLOW_DURATION_MS,
+  TORNADO_COOLDOWN_MS,
+  TORNADO_SPEED,
 } from './data/constants.ts';
 import { getUpgradeRank, type UpgradeRanks } from './data/upgrades.ts';
 
@@ -134,10 +141,78 @@ export class PlayerBuild {
   get hasArcaneMissile(): boolean {
     if (typeof window !== 'undefined' && window.location) {
       const params = new URLSearchParams(window.location.search);
-      if (params.get('testSkill') === 'chain') {
+      if (params.get('testSkill') === 'chain' || params.get('testSkill') === 'tornado') {
         return false;
       }
     }
     return true;
+  }
+
+  // === Tornado Getters ===
+  get hasTornado(): boolean {
+    if (typeof window !== 'undefined' && window.location) {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('testSkill') === 'arcane') {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  get tornadoTickDamage(): number {
+    const amp = getUpgradeRank(this.ranks, 'tornado_damage');
+    return TORNADO_BASE_TICK_DAMAGE * (1 + 0.3 * amp);
+  }
+
+  get tornadoRadius(): number {
+    const size = getUpgradeRank(this.ranks, 'tornado_size');
+    return TORNADO_BASE_RADIUS * (1 + 0.2 * size);
+  }
+
+  get tornadoDurationMs(): number {
+    const dur = getUpgradeRank(this.ranks, 'tornado_duration');
+    return TORNADO_BASE_DURATION_MS + dur * 1000;
+  }
+
+  get tornadoMultiCount(): number {
+    return 1 + getUpgradeRank(this.ranks, 'tornado_multi');
+  }
+
+  get tornadoHasSuction(): boolean {
+    return getUpgradeRank(this.ranks, 'tornado_suction') > 0;
+  }
+
+  get tornadoSuctionStrength(): number {
+    const strength = getUpgradeRank(this.ranks, 'tornado_suction_strength');
+    return 1 + 0.3 * strength;
+  }
+
+  get tornadoHasKnockback(): boolean {
+    return getUpgradeRank(this.ranks, 'tornado_knockback') > 0;
+  }
+
+  get tornadoHasSlow(): boolean {
+    return getUpgradeRank(this.ranks, 'tornado_slow') > 0;
+  }
+
+  get tornadoSlowRatio(): number {
+    const amp = getUpgradeRank(this.ranks, 'tornado_slow_strength');
+    return Math.min(0.95, TORNADO_SLOW_BASE_RATIO + amp * 0.1);
+  }
+
+  get tornadoSlowDurationMs(): number {
+    return TORNADO_SLOW_DURATION_MS;
+  }
+
+  get tornadoHasElectric(): boolean {
+    return getUpgradeRank(this.ranks, 'tornado_electric') > 0;
+  }
+
+  get tornadoCooldownMs(): number {
+    return TORNADO_COOLDOWN_MS;
+  }
+
+  get tornadoSpeed(): number {
+    return TORNADO_SPEED;
   }
 }

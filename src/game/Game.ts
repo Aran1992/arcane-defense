@@ -7,6 +7,7 @@ import { PlayerBuild } from './PlayerBuild.ts';
 import { CombatSystem } from './systems/CombatSystem.ts';
 import { LevelProgressSystem } from './systems/LevelProgressSystem.ts';
 import { ProjectileSystem } from './systems/ProjectileSystem.ts';
+import { TornadoSystem } from './systems/TornadoSystem.ts';
 import { WallSystem } from './systems/WallSystem.ts';
 import { WaveSpawnSystem } from './systems/WaveSpawnSystem.ts';
 import { ChainLightningSystem } from './systems/ChainLightningSystem.ts';
@@ -26,10 +27,12 @@ export class Game {
   private readonly enemyLayer: Container;
   private readonly vfxLayer: Container;
   private readonly projectileLayer: Container;
+  private readonly tornadoLayer: Container;
   private readonly waveSpawn: WaveSpawnSystem;
   private readonly levelProgress = new LevelProgressSystem();
   private readonly wall = new WallSystem();
   private readonly projectiles: ProjectileSystem;
+  private readonly tornadoes: TornadoSystem;
   private readonly chainLightning: ChainLightningSystem;
   private readonly combat: CombatSystem;
 
@@ -63,9 +66,11 @@ export class Game {
     this.enemyLayer = new Container();
     this.vfxLayer = new Container();
     this.projectileLayer = new Container();
+    this.tornadoLayer = new Container();
     this.gameplayLayer.addChild(this.enemyLayer);
     this.gameplayLayer.addChild(this.vfxLayer);
     this.gameplayLayer.addChild(this.projectileLayer);
+    this.gameplayLayer.addChild(this.tornadoLayer);
 
     this.waveSpawn = new WaveSpawnSystem(this.enemyLayer);
     this.projectiles = new ProjectileSystem(this.projectileLayer, this.vfxLayer, (e) =>
@@ -74,7 +79,10 @@ export class Game {
     this.chainLightning = new ChainLightningSystem(this.projectileLayer, this.vfxLayer, (e) =>
       this.handleKill(e),
     );
-    this.combat = new CombatSystem(this.projectiles, this.chainLightning);
+    this.tornadoes = new TornadoSystem(this.tornadoLayer, this.vfxLayer, (e) =>
+      this.handleKill(e),
+    );
+    this.combat = new CombatSystem(this.projectiles, this.chainLightning, this.tornadoes);
     this.initTestMode();
   }
 
@@ -156,6 +164,7 @@ export class Game {
       this.combat.update(this.build, this.enemies, dt);
       this.projectiles.update(this.build, this.enemies, dt);
       this.chainLightning.update(dt);
+      this.tornadoes.update(this.build, this.enemies, dt);
 
       if (this.waveSpawn.isComplete && !this.hasLivingEnemies()) {
         this.setPhase('victory');
@@ -210,6 +219,7 @@ export class Game {
     this.enemies.length = 0;
     this.projectiles.clear();
     this.chainLightning.clear();
+    this.tornadoes.clear();
     this.build.ranks = {};
     this.initTestMode();
     this.levelProgress.level = 1;
@@ -218,6 +228,7 @@ export class Game {
     this.waveSpawn.reset();
     this.combat.cooldown = 0;
     this.combat.chainCooldown = 0;
+    this.combat.tornadoCooldown = 0;
     this.combat.clearPendingBursts();
     this.setPhase('playing');
   }

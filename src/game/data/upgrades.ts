@@ -19,7 +19,18 @@ export type UpgradeId =
   | 'chain_slow'
   | 'chain_fork'
   | 'chain_explode'
-  | 'chain_surge';
+  | 'chain_surge'
+  // Tornado
+  | 'tornado_damage'
+  | 'tornado_size'
+  | 'tornado_duration'
+  | 'tornado_suction'
+  | 'tornado_suction_strength'
+  | 'tornado_multi'
+  | 'tornado_knockback'
+  | 'tornado_slow'
+  | 'tornado_slow_strength'
+  | 'tornado_electric';
 
 export interface UpgradeDef {
   id: UpgradeId;
@@ -159,6 +170,79 @@ export const UPGRADE_DEFS: readonly UpgradeDef[] = [
     prerequisites: ['unlock_chain'],
     description: '每次弹跳成功，该技能的剩余冷却时间减少0.15秒',
   },
+  // === Tornado Upgrades ===
+  {
+    id: 'tornado_damage',
+    name: '旋风之力',
+    maxRank: 5,
+    prerequisites: [],
+    description: '每级 tick 伤害 +30%',
+  },
+  {
+    id: 'tornado_size',
+    name: '疾风领域',
+    maxRank: 3,
+    prerequisites: [],
+    description: '每级判定半径 +20%',
+  },
+  {
+    id: 'tornado_duration',
+    name: '暴风眼',
+    maxRank: 3,
+    prerequisites: [],
+    description: '每级存在时间 +1s',
+  },
+  {
+    id: 'tornado_suction',
+    name: '风之牵引',
+    maxRank: 1,
+    prerequisites: [],
+    mutexGroup: 'crowd_control',
+    description: '将触碰龙卷风范围内的敌人向中心拉扯',
+  },
+  {
+    id: 'tornado_suction_strength',
+    name: '牵引增强',
+    maxRank: 3,
+    prerequisites: ['tornado_suction'],
+    description: '每级拉扯力 +30%',
+  },
+  {
+    id: 'tornado_multi',
+    name: '多重旋风',
+    maxRank: 2,
+    prerequisites: [],
+    description: '每级额外 +1 个龙卷风（扇形对称）',
+  },
+  {
+    id: 'tornado_knockback',
+    name: '风之冲击',
+    maxRank: 1,
+    prerequisites: [],
+    mutexGroup: 'crowd_control',
+    description: '命中敌人时击退一段距离',
+  },
+  {
+    id: 'tornado_slow',
+    name: '迟缓之风',
+    maxRank: 1,
+    prerequisites: [],
+    description: '被龙卷风触碰的敌人减速 40%，持续 1.5s',
+  },
+  {
+    id: 'tornado_slow_strength',
+    name: '深陷泥沼',
+    maxRank: 3,
+    prerequisites: ['tornado_slow'],
+    description: '每级减速效果 +10%',
+  },
+  {
+    id: 'tornado_electric',
+    name: '雷霆风暴',
+    maxRank: 1,
+    prerequisites: [],
+    description: '龙卷风每 tick 额外对范围内随机一个敌人造成闪电伤害',
+  },
 ];
 
 export type UpgradeRanks = Partial<Record<UpgradeId, number>>;
@@ -199,7 +283,9 @@ export function rollUpgradeChoices(ranks: UpgradeRanks, count = 3): UpgradeDef[]
     if (testSkill === 'chain') {
       pool = pool.filter((d) => d.id === 'unlock_chain' || d.id.startsWith('chain_'));
     } else if (testSkill === 'arcane') {
-      pool = pool.filter((d) => d.id !== 'unlock_chain' && !d.id.startsWith('chain_'));
+      pool = pool.filter((d) => d.id !== 'unlock_chain' && !d.id.startsWith('chain_') && !d.id.startsWith('tornado_'));
+    } else if (testSkill === 'tornado') {
+      pool = pool.filter((d) => d.id.startsWith('tornado_'));
     }
   }
 
