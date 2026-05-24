@@ -3,6 +3,8 @@ import {
   PLAYER_ATTACK_RANGE,
   PLAYER_X,
   PLAYER_Y,
+  TORNADO_TRIGGER_ZONE_TOP,
+  TORNADO_TRIGGER_ZONE_BOTTOM,
 } from '../data/constants.ts';
 import type { PlayerBuild } from '../PlayerBuild.ts';
 import type { Enemy } from '../entities/Enemy.ts';
@@ -44,14 +46,14 @@ export class CombatSystem {
       }
     }
 
-    // 2. 龙卷风 (独立冷却)
+    // 2. 龙卷风 (独立冷却，战场中部触发，在敌人位置生成)
     if (build.hasTornado) {
       this.tornadoCooldown -= dt;
       if (this.tornadoCooldown <= 0) {
-        const target = this.findTarget(enemies);
-        if (target) {
-          const aim = this.leadTarget(target);
-          this.tornadoes.fireAt(build, aim.x, aim.y);
+        const triggerTarget = this.findTornadoTriggerTarget(enemies);
+        if (triggerTarget) {
+          // 直接在触发敌人位置生成龙卷风
+          this.tornadoes.spawnAt(build, triggerTarget.x, triggerTarget.y);
           this.tornadoCooldown = build.tornadoCooldownMs;
         }
       }
@@ -96,6 +98,25 @@ export class CombatSystem {
         this.pendingBursts.splice(i, 1);
       }
     }
+  }
+
+  /**
+   * 在龙卷风触发区域内寻找最靠近底部的活敌
+   * 触发区域为战场中部（TORNADO_TRIGGER_ZONE_TOP ~ TORNADO_TRIGGER_ZONE_BOTTOM）
+   */
+  private findTornadoTriggerTarget(enemies: Enemy[]): Enemy | null {
+    let best: Enemy | null = null;
+    let bestY = -1;
+    for (const e of enemies) {
+      if (!e.alive) {
+        continue;
+      }
+      if (e.y >= TORNADO_TRIGGER_ZONE_TOP && e.y <= TORNADO_TRIGGER_ZONE_BOTTOM && e.y > bestY) {
+        bestY = e.y;
+        best = e;
+      }
+    }
+    return best;
   }
 
   /** 按敌人下移速度预判落点，减少贴脸移动时的脱靶 */

@@ -3,9 +3,8 @@ import {
   TORNADO_TICK_MS,
   TORNADO_MULTI_ANGLE_SPREAD_DEG,
   TORNADO_KNOCKBACK_DISTANCE,
-  PLAYER_X,
-  PLAYER_Y,
   ENEMY_SPAWN_Y,
+  PLAYER_Y,
 } from '../data/constants.ts';
 import type { PlayerBuild } from '../PlayerBuild.ts';
 import { Enemy } from '../entities/Enemy.ts';
@@ -23,24 +22,22 @@ export class TornadoSystem {
   ) {}
 
   /**
-   * 在目标方向发射龙卷风（可多重）
+   * 在触发敌人位置生成龙卷风，向上方移动（可多重，水平扇形散开）
    */
-  fireAt(build: PlayerBuild, aimX: number, aimY: number): void {
-    const dx = aimX - PLAYER_X;
-    const dy = aimY - PLAYER_Y;
+  spawnAt(build: PlayerBuild, x: number, y: number): void {
     const speed = build.tornadoSpeed;
-    const baseAngle = Math.atan2(dy, dx);
     const count = build.tornadoMultiCount;
     const spreadDeg = count > 1 ? TORNADO_MULTI_ANGLE_SPREAD_DEG : 0;
     const spreadRad = (spreadDeg * Math.PI) / 180;
 
     for (let i = 0; i < count; i++) {
       const offset = count === 1 ? 0 : (i - (count - 1) / 2) * spreadRad;
-      const angle = baseAngle + offset;
+      // 向上方移动，水平方向扇形散开
+      const angle = -Math.PI / 2 + offset;
       this.spawn(
         build,
-        PLAYER_X,
-        PLAYER_Y,
+        x,
+        y,
         Math.cos(angle) * speed,
         Math.sin(angle) * speed,
       );

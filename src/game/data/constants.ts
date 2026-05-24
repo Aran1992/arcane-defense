@@ -61,6 +61,10 @@ export const CHAIN_LIGHTNING_BASE_COOLDOWN_MS = 3500;
 export const CHAIN_LIGHTNING_EXPLODE_RADIUS = 64;
 export const CHAIN_LIGHTNING_EXPLODE_DAMAGE_RATIO = 0.8;
 
+/** 龙卷风触发区域（战场中部，玩家与刷怪区之间） */
+export const TORNADO_TRIGGER_ZONE_TOP = 300;
+export const TORNADO_TRIGGER_ZONE_BOTTOM = 900;
+
 /** 龙卷风 */
 export const TORNADO_BASE_RADIUS = 48;
 export const TORNADO_SPEED = 60;
