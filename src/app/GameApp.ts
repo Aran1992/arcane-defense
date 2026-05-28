@@ -15,10 +15,13 @@ export class GameApp {
 
   async init(container: HTMLElement): Promise<void> {
     this.app = new Application();
+    const dpr = Math.min(window.devicePixelRatio || 1, 3); // 限制最大 3x 避免性能开销
     await this.app.init({
       background: '#0d1117',
       resizeTo: container,
       antialias: true,
+      resolution: dpr,
+      autoDensity: true,
     });
     container.appendChild(this.app.canvas);
 
