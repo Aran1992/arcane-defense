@@ -48,6 +48,8 @@ export class Game {
   private readonly xpLabel: Text;
   /** 场景内 HUD：城墙血量条 */
   private readonly wallHpBar: Graphics;
+  /** 文字渲染分辨率（设备像素比），默认 1 */
+  private textResolution = 1;
 
   phase: GamePhase = 'playing';
   private pendingUpgradeChoices: UpgradeDef[] = [];
@@ -97,12 +99,12 @@ export class Game {
       fontWeight: 'bold' as const,
     };
 
-    this.waveText = new Text({ text: '波次 1 / 20', style: textStyle });
+    this.waveText = new Text({ text: '波次 1 / 20', style: textStyle, resolution: 2 });
     this.waveText.x = 16;
     this.waveText.y = 8;
     this.world.addChild(this.waveText);
 
-    this.levelText = new Text({ text: 'Lv.1', style: { ...textStyle, fill: 0xa78bfa } });
+    this.levelText = new Text({ text: 'Lv.1', style: { ...textStyle, fill: 0xa78bfa }, resolution: 2 });
     this.levelText.x = 180;
     this.levelText.y = 8;
     this.world.addChild(this.levelText);
@@ -118,10 +120,14 @@ export class Game {
     this.xpLabel = new Text({
       text: '0 / 0',
       style: { fontSize: 10, fill: 0xd4d4d8, fontFamily: 'monospace' },
+      resolution: 2,
     });
     this.xpLabel.x = 230;
     this.xpLabel.y = 30;
     this.world.addChild(this.xpLabel);
+
+    // 初始化 DPR（默认 2，GameApp 后续可调用 setDpr 调整）
+    this.setDpr(2);
 
     this.waveSpawn = new WaveSpawnSystem(this.enemyLayer);
     this.projectiles = new ProjectileSystem(this.projectileLayer, this.vfxLayer, (e) =>
@@ -298,6 +304,14 @@ export class Game {
     this.build.ranks = applyUpgrade(this.build.ranks, def.id);
     this.setPhase('playing');
     this.pendingUpgradeChoices = [];
+  }
+
+  /** 设置设备像素比，让 Text 渲染更清晰 */
+  setDpr(dpr: number): void {
+    this.textResolution = Math.min(dpr, 3);
+    this.waveText.resolution = this.textResolution;
+    this.levelText.resolution = this.textResolution;
+    this.xpLabel.resolution = this.textResolution;
   }
 
   restart(): void {

@@ -1,5 +1,5 @@
 /** 版本号（每次发布新版本时递增） */
-export const GAME_VERSION = 'v0.1.2';
+export const GAME_VERSION = 'v0.1.3';
 
 /** 设计分辨率 */
 export const DESIGN_WIDTH = 720;
