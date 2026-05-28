@@ -23,8 +23,6 @@ export class GameApp {
       resolution: dpr,
       autoDensity: true,
     });
-    // 让 PixiJS Text 也以设备像素比渲染，避免高分屏文字模糊
-    this.game.setDpr(dpr);
     container.appendChild(this.app.canvas);
 
     const callbacks: GameCallbacks = {
@@ -34,6 +32,8 @@ export class GameApp {
     };
 
     this.game = new Game(this.app.stage, callbacks);
+    // 让 PixiJS Text 也以设备像素比渲染，避免高分屏文字模糊
+    this.game.setDpr(dpr);
     this.layout();
 
     const hudRoot = document.createElement('div');
