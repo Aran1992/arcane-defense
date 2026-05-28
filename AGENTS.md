@@ -26,6 +26,8 @@
 5. **工具链**：实现阶段每次提交前须通过 Prettier 与 ESLint（见 [docs/dev/tooling.md](docs/dev/tooling.md)）。
 6. **开发与提交工作流**：每次一项功能开发完成后，或者一项新功能开发前，必须通过开启一个 subagent 的方式对当前的改动进行审查与规范的 Git 提交。完成提交后方可开始新的开发。
 
+   > **⚠️ Push 注意**：subagent 运行在沙箱中，没有外网访问权限，无法 push 到 GitHub。审查与本地 commit 可在 subagent 完成，但 **push 必须在主线（main session）执行**。
+
 ## v1 范围清单
 
 | 包含                            | 不包含                     |
