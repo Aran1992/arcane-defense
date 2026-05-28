@@ -203,6 +203,21 @@ export class TornadoSystem {
     this.tornadoes.splice(index, 1);
   }
 
+  /** 获取最新生成的龙卷风剩余持续时间（用于 HUD 展示） */
+  getActiveRemaining(): { remainingMs: number; maxMs: number } | null {
+    if (this.tornadoes.length === 0) {
+      return null;
+    }
+    const newest = this.tornadoes[this.tornadoes.length - 1]!;
+    if (!newest.alive) {
+      return null;
+    }
+    return {
+      remainingMs: Math.max(0, newest.lifetimeMs),
+      maxMs: newest.durationMs,
+    };
+  }
+
   clear(): void {
     for (const t of this.tornadoes) {
       t.alive = false;

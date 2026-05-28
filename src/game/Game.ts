@@ -122,6 +122,7 @@ export class Game {
       wallHp: Math.max(0, this.wall.hp),
       wallMaxHp: this.wall.maxHp,
       enemyCount: this.enemies.filter((e) => e.alive).length,
+      skills: this.combat.getSkillStatuses(this.build, this.tornadoes),
     };
   }
 

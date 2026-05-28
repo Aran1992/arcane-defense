@@ -11,6 +11,7 @@ import type { Enemy } from '../entities/Enemy.ts';
 import type { ProjectileSystem } from './ProjectileSystem.ts';
 import type { ChainLightningSystem } from './ChainLightningSystem.ts';
 import type { TornadoSystem } from './TornadoSystem.ts';
+import type { SkillStatus } from '../GameState.ts';
 
 interface PendingBurst {
   delayMs: number;
@@ -71,6 +72,46 @@ export class CombatSystem {
         }
       }
     }
+  }
+
+  /** 收集所有可用技能的冷却与状态 */
+  getSkillStatuses(build: PlayerBuild, tornadoSys: TornadoSystem): SkillStatus[] {
+    const statuses: SkillStatus[] = [];
+
+    if (build.hasArcaneMissile) {
+      statuses.push({
+        id: 'arcane_missile',
+        name: '奥术飞弹',
+        cooldownRemaining: Math.max(0, this.cooldown),
+        cooldownMax: build.cooldownMs,
+        ready: this.cooldown <= 0,
+      });
+    }
+
+    if (build.hasChainLightning) {
+      statuses.push({
+        id: 'chain_lightning',
+        name: '闪电链',
+        cooldownRemaining: Math.max(0, this.chainCooldown),
+        cooldownMax: build.chainCooldownMs,
+        ready: this.chainCooldown <= 0,
+      });
+    }
+
+    if (build.hasTornado) {
+      const active = tornadoSys.getActiveRemaining();
+      statuses.push({
+        id: 'tornado',
+        name: '龙卷风',
+        cooldownRemaining: Math.max(0, this.tornadoCooldown),
+        cooldownMax: build.tornadoCooldownMs,
+        ready: this.tornadoCooldown <= 0,
+        activeRemaining: active?.remainingMs,
+        activeMax: active?.maxMs,
+      });
+    }
+
+    return statuses;
   }
 
   clearPendingBursts(): void {

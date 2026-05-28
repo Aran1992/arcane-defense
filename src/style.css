@@ -130,6 +130,110 @@
   background: #2ea043;
 }
 
+/* ==================== 技能冷却指示器（圆形图标） ==================== */
+.hud-skills {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  pointer-events: none;
+  z-index: 10;
+  padding: 6px 0;
+}
+
+.skill-icon {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+}
+
+.skill-icon-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2d333b, #1c2128);
+  border: 2px solid #444c56;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  position: relative;
+  z-index: 1;
+}
+
+.skill-icon-emoji {
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* 就绪状态：发光边框 */
+.skill-icon.is-ready .skill-icon-inner {
+  border-color: #2ea043;
+  box-shadow: 0 0 12px rgba(46, 204, 113, 0.4), 0 2px 8px rgba(0, 0, 0, 0.4);
+  animation: skill-ready-pulse 2s ease-in-out infinite;
+}
+
+@keyframes skill-ready-pulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(46, 204, 113, 0.4), 0 2px 8px rgba(0, 0, 0, 0.4); }
+  50% { box-shadow: 0 0 20px rgba(46, 204, 113, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4); }
+}
+
+/* 冷却遮罩：灰色扫光，从 12 点方向顺时针 */
+.skill-cd-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  z-index: 2;
+  background: conic-gradient(
+    rgba(0, 0, 0, 0.55) 0deg,
+    rgba(0, 0, 0, 0.55) var(--cd-deg),
+    transparent var(--cd-deg),
+    transparent 360deg
+  );
+  transform: rotate(-90deg);
+}
+
+/* 冷却倒计时文字 */
+.skill-cd-text {
+  position: absolute;
+  bottom: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: #f0f6fc;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+}
+
+/* 持续释放（龙卷风）：外圈绿色转圈 */
+.skill-active-ring {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  z-index: 0;
+  background: conic-gradient(
+    #2ea043 0deg,
+    #2ea043 var(--active-deg),
+    transparent var(--active-deg),
+    transparent 360deg
+  );
+  transform: rotate(-90deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+}
+
+/* 持续释放中：加一个旋转动画让环更醒目 */
+.skill-icon.is-active .skill-icon-inner {
+  border-color: #2ea043;
+}
+
 /* ==================== 开发者沙盒调试面板 ==================== */
 .dev-panel {
   position: absolute;
