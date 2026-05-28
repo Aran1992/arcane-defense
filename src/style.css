@@ -10,9 +10,9 @@
 .version-label {
   position: absolute;
   top: 4px;
-  left: 6px;
+  right: 6px;
   font-size: 10px;
-  color: rgba(230, 237, 243, 0.45);
+  color: rgba(230, 237, 243, 0.35);
   font-family: monospace;
   letter-spacing: 0.5px;
   pointer-events: none;
@@ -20,70 +20,7 @@
 }
 
 .hud {
-  padding: 12px 16px;
-  color: #e6edf3;
-  font-size: 14px;
-  line-height: 1.6;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
-}
-
-.hud-row {
-  margin: 2px 0;
-}
-
-/* ==================== 经验条（升级进度条） ==================== */
-.xp-bar-wrap {
-  position: relative;
-  margin: 6px 0;
-  height: 22px;
-  display: flex;
-  align-items: center;
-}
-
-.xp-bar-bg {
-  flex: 1;
-  height: 14px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 7px;
-  overflow: hidden;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.xp-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #8b5cf6, #a78bfa, #c084fc);
-  border-radius: 7px;
-  transition: width 0.25s ease;
-  box-shadow: 0 0 8px rgba(139, 92, 246, 0.5);
-  position: relative;
-}
-
-.xp-bar-fill::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
-  border-radius: 7px;
-  animation: xp-bar-shimmer 2s ease-in-out infinite;
-}
-
-@keyframes xp-bar-shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-.xp-bar-label {
-  position: absolute;
-  right: 0;
-  font-size: 11px;
-  font-weight: 600;
-  color: #d4d4d8;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.3px;
-  min-width: 56px;
-  text-align: right;
+  /* 顶部信息移入 PixiJS 场景内绘制 */
 }
 
 .upgrade-overlay {

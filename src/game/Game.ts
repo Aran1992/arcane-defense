@@ -1,4 +1,4 @@
-import { Container, Graphics } from 'pixi.js';
+import { Container, Graphics, Text } from 'pixi.js';
 import { DESIGN_HEIGHT, DESIGN_WIDTH, PLAYER_X, PLAYER_Y, WALL_Y } from './data/constants.ts';
 import { applyUpgrade, rollUpgradeChoices, type UpgradeDef } from './data/upgrades.ts';
 import type { Enemy } from './entities/Enemy.ts';
@@ -36,6 +36,19 @@ export class Game {
   private readonly chainLightning: ChainLightningSystem;
   private readonly combat: CombatSystem;
 
+  /** 场景内 HUD：波次文字 */
+  private readonly waveText: Text;
+  /** 场景内 HUD：等级文字 */
+  private readonly levelText: Text;
+  /** 场景内 HUD：经验条背景 */
+  private readonly xpBarBg: Graphics;
+  /** 场景内 HUD：经验条填充 */
+  private readonly xpBarFill: Graphics;
+  /** 场景内 HUD：经验数值文字 */
+  private readonly xpLabel: Text;
+  /** 场景内 HUD：城墙血量条 */
+  private readonly wallHpBar: Graphics;
+
   phase: GamePhase = 'playing';
   private pendingUpgradeChoices: UpgradeDef[] = [];
 
@@ -71,6 +84,44 @@ export class Game {
     this.gameplayLayer.addChild(this.vfxLayer);
     this.gameplayLayer.addChild(this.projectileLayer);
     this.gameplayLayer.addChild(this.tornadoLayer);
+
+    // 城墙血量条（放在最上层，不被敌人/弹道遮挡）
+    this.wallHpBar = new Graphics();
+    this.gameplayLayer.addChild(this.wallHpBar);
+
+    // 场景内顶部 HUD（放在 world 但不被 gameplayLayer 裁剪，随场景缩放）
+    const textStyle = {
+      fontSize: 15,
+      fill: 0xe6edf3,
+      fontFamily: 'monospace',
+      fontWeight: 'bold' as const,
+    };
+
+    this.waveText = new Text({ text: '波次 1 / 20', style: textStyle });
+    this.waveText.x = 16;
+    this.waveText.y = 8;
+    this.world.addChild(this.waveText);
+
+    this.levelText = new Text({ text: 'Lv.1', style: { ...textStyle, fill: 0xa78bfa } });
+    this.levelText.x = 180;
+    this.levelText.y = 8;
+    this.world.addChild(this.levelText);
+
+    this.xpBarBg = new Graphics();
+    this.xpBarBg.roundRect(16, 30, 210, 12, 6);
+    this.xpBarBg.fill({ color: 0x2d333b });
+    this.world.addChild(this.xpBarBg);
+
+    this.xpBarFill = new Graphics();
+    this.world.addChild(this.xpBarFill);
+
+    this.xpLabel = new Text({
+      text: '0 / 0',
+      style: { fontSize: 10, fill: 0xd4d4d8, fontFamily: 'monospace' },
+    });
+    this.xpLabel.x = 230;
+    this.xpLabel.y = 30;
+    this.world.addChild(this.xpLabel);
 
     this.waveSpawn = new WaveSpawnSystem(this.enemyLayer);
     this.projectiles = new ProjectileSystem(this.projectileLayer, this.vfxLayer, (e) =>
@@ -126,6 +177,41 @@ export class Game {
     };
   }
 
+  /** 更新场景内 HUD（波次、等级、经验条、城墙血量） */
+  private updateSceneHud(): void {
+    const snap = this.getSnapshot();
+
+    // 波次 & 等级
+    this.waveText.text = `波次 ${snap.wave} / 20`;
+    this.levelText.text = `Lv.${snap.level}`;
+
+    // 经验条
+    const pct =
+      snap.killsRequired > 0
+        ? Math.min(1, snap.killsThisLevel / snap.killsRequired)
+        : 0;
+    this.xpBarFill.clear();
+    if (pct > 0) {
+      this.xpBarFill.roundRect(16, 30, 210 * pct, 12, 6);
+      this.xpBarFill.fill({ color: 0x8b5cf6 });
+    }
+    this.xpLabel.text = `${snap.killsThisLevel} / ${snap.killsRequired}`;
+
+    // 城墙血量条（在城墙线上方）
+    const wallPct =
+      this.wall.maxHp > 0 ? Math.max(0, this.wall.hp / this.wall.maxHp) : 0;
+    const barY = WALL_Y - 6;
+    const barWidth = DESIGN_WIDTH - 80;
+    this.wallHpBar.clear();
+    // 背景
+    this.wallHpBar.rect(40, barY, barWidth, 5);
+    this.wallHpBar.fill({ color: 0x3a1e1e });
+    // 填充
+    this.wallHpBar.rect(40, barY, barWidth * wallPct, 5);
+    const hpColor = wallPct > 0.5 ? 0x2ecc71 : wallPct > 0.25 ? 0xf39c12 : 0xe74c3c;
+    this.wallHpBar.fill({ color: hpColor });
+  }
+
   private setPhase(phase: GamePhase): void {
     this.phase = phase;
     this.callbacks.onPhaseChange(phase);
@@ -133,6 +219,7 @@ export class Game {
   }
 
   private emitSnapshot(): void {
+    this.updateSceneHud();
     this.callbacks.onSnapshot(this.getSnapshot());
   }
 
@@ -248,7 +335,6 @@ export class Game {
   }
 
   clearAllEnemies(): void {
-    // 杀死当前屏幕上所有活着的敌人，并触发击杀
     for (const e of this.enemies) {
       if (e.alive) {
         e.hp = 0;

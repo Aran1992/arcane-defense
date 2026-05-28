@@ -21,21 +21,8 @@ export class Hud {
   }
 
   update(snapshot: GameSnapshot): void {
-    const pct = snapshot.killsRequired > 0
-      ? Math.min(1, snapshot.killsThisLevel / snapshot.killsRequired)
-      : 0;
-    this.el.innerHTML = `
-      <div class="hud-row">波次 ${snapshot.wave} / 20</div>
-      <div class="hud-row">等级 ${snapshot.level}</div>
-      <div class="xp-bar-wrap">
-        <div class="xp-bar-bg">
-          <div class="xp-bar-fill" style="width:${(pct * 100).toFixed(1)}%"></div>
-        </div>
-        <span class="xp-bar-label">${snapshot.killsThisLevel} / ${snapshot.killsRequired}</span>
-      </div>
-      <div class="hud-row">城墙 ${snapshot.wallHp} / ${snapshot.wallMaxHp}</div>
-      <div class="hud-row">场上 ${snapshot.enemyCount}</div>
-    `;
+    // 场景内信息（波次/等级/经验/城墙血量）改由 PixiJS 绘制
+    this.el.innerHTML = '';
     this.renderSkills(snapshot.skills);
   }
 
@@ -56,13 +43,15 @@ export class Hud {
       .map((s) => {
         const icon = Hud.SKILL_ICON[s.id] ?? '?';
         const cdFrac = s.cooldownMax > 0 ? s.cooldownRemaining / s.cooldownMax : 0;
-        // 冷却遮罩弧度（conic-gradient 从 12 点顺时针扫光）
         const cdDeg = Math.round(cdFrac * 360);
         const ready = s.ready;
         const cdText = ready ? '' : `${(s.cooldownRemaining / 1000).toFixed(1)}`;
 
-        // 持续释放进度（龙卷风）
-        const hasActive = s.activeRemaining !== undefined && s.activeRemaining !== null && s.activeMax && s.activeMax > 0;
+        const hasActive =
+          s.activeRemaining !== undefined &&
+          s.activeRemaining !== null &&
+          s.activeMax &&
+          s.activeMax > 0;
         const activeFrac = hasActive ? s.activeRemaining! / s.activeMax! : 0;
         const activeDeg = Math.round(activeFrac * 360);
 
