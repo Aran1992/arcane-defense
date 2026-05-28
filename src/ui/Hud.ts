@@ -21,10 +21,18 @@ export class Hud {
   }
 
   update(snapshot: GameSnapshot): void {
+    const pct = snapshot.killsRequired > 0
+      ? Math.min(1, snapshot.killsThisLevel / snapshot.killsRequired)
+      : 0;
     this.el.innerHTML = `
       <div class="hud-row">波次 ${snapshot.wave} / 20</div>
       <div class="hud-row">等级 ${snapshot.level}</div>
-      <div class="hud-row">击杀 ${snapshot.killsThisLevel} / ${snapshot.killsRequired}</div>
+      <div class="xp-bar-wrap">
+        <div class="xp-bar-bg">
+          <div class="xp-bar-fill" style="width:${(pct * 100).toFixed(1)}%"></div>
+        </div>
+        <span class="xp-bar-label">${snapshot.killsThisLevel} / ${snapshot.killsRequired}</span>
+      </div>
       <div class="hud-row">城墙 ${snapshot.wallHp} / ${snapshot.wallMaxHp}</div>
       <div class="hud-row">场上 ${snapshot.enemyCount}</div>
     `;
