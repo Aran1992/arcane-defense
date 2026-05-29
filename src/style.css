@@ -1,8 +1,6 @@
 .hud-root {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  inset: 0;
   pointer-events: none;
   z-index: 10;
 }
@@ -165,13 +163,24 @@
 /* 就绪状态：发光边框 */
 .skill-icon.is-ready .skill-icon-inner {
   border-color: #2ea043;
-  box-shadow: 0 0 12px rgba(46, 204, 113, 0.4), 0 2px 8px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 0 12px rgba(46, 204, 113, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.4);
   animation: skill-ready-pulse 2s ease-in-out infinite;
 }
 
 @keyframes skill-ready-pulse {
-  0%, 100% { box-shadow: 0 0 12px rgba(46, 204, 113, 0.4), 0 2px 8px rgba(0, 0, 0, 0.4); }
-  50% { box-shadow: 0 0 20px rgba(46, 204, 113, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4); }
+  0%,
+  100% {
+    box-shadow:
+      0 0 12px rgba(46, 204, 113, 0.4),
+      0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+  50% {
+    box-shadow:
+      0 0 20px rgba(46, 204, 113, 0.6),
+      0 2px 8px rgba(0, 0, 0, 0.4);
+  }
 }
 
 /* 冷却遮罩：灰色扫光，从 12 点方向顺时针 */
